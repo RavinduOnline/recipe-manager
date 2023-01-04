@@ -24,12 +24,11 @@ export default function Home() {
   return (
     <div>
         <Header/>
-
         <div className='py-16 px-20'>
 
             <div  className='grid gap-10 grid-cols-4  '>
               {recipe.map( data => (
-                <RecipeCard recipe={data}/>
+                <RecipeCard recipe={data} reload={()=>retrieveRecipe(recipe._id)}/>
               ))}
             </div>
         </div>
