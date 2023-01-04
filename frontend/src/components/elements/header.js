@@ -21,7 +21,8 @@ export default function Header() {
                     </a>
                   </li>
                 </ul>
-                <a href="#n" className="text-white ml-5  bg-red-600 hover:bg-gray-700 font-semibold font-medium rounded-lg text-sm px-4 py-3 ">
+                {/* Refresh using current URL */}
+                <a href={document.URL} className="text-white ml-5  bg-red-600 hover:bg-gray-700 font-semibold font-medium rounded-lg text-sm px-4 py-3 flex items-start justify-center ">
                   <i className="ri-refresh-line"></i> &nbsp; Refresh
                 </a>
               </div>
