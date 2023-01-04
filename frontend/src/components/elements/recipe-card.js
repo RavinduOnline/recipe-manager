@@ -7,11 +7,10 @@ import MessageModel from "./message-model"
 export default function RecipeCard({recipe , reload}) {
 
     const [open, setOpen] = useState(false);
-    const [isDelete, setisDelete] = useState(false);
-
 
     const handleOpen = () => setOpen(!open);
 
+    const description = `${recipe.description.substr(0, 200)}${ recipe.description.length > 200  && "...."}`;
 
     const onDelete = (id) =>{
         fetch('/recipe/delete/' + id, {
@@ -46,6 +45,8 @@ export default function RecipeCard({recipe , reload}) {
          })
       }
 
+    
+
   return (
     <div>
         <ToastContainer/>
@@ -60,14 +61,8 @@ export default function RecipeCard({recipe , reload}) {
 
                 <p className="font-normal text-gray-500 text-justify text-gray-700 mb-3">You need only {recipe.ingredients.length} ingredients</p>
 
-                <p className="font-normal text-justify text-gray-700 mb-3">
-                    { recipe.description.substr(0, 200)}
-                    {
-                      recipe.description.length > 200  &&
-                        <span>.....</span>
-                    }
-                </p>
-
+                <p className="font-normal text-justify text-gray-700 mb-3 " dangerouslySetInnerHTML={{__html:description}}/>   
+                
                 <div className='flex flex-col'>
                     <a className=" min-w-full text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-2 flex items-start justify-center" href="#3">
                         <i className="ri-fire-fill"></i> &nbsp; Let's Cook

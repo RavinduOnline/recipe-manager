@@ -18,7 +18,10 @@ export default function MessageModel({modelOpen, isConfirm , data}) {
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(!open);
-    const handleIsConfirm = () => isConfirm(!isConfirm);
+    const handleIsConfirm = () => {
+        isConfirm(!isConfirm);
+        handleOpen()
+    };
 
     
   return (
