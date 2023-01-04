@@ -1,12 +1,13 @@
 
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
 import Header from "../elements/header";
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css' //quill's css important
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; //quill's css import
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function Edit() {
+export default function RecipeEdit() {
     
     const [recipeName , setRecipeName] = useState("");
     const [ingredientName , setIngredientName] = useState("");
@@ -15,12 +16,19 @@ export default function Edit() {
     const [Ingredients , setIngredients] = useState([]);
     const [descriptionInfo, setDescriptionInfo] = useState({description:''});
     const [Error , setError] = useState([]);
+    const {id} = useParams();
+
+
+    useEffect(() => {
+        getRecipe();
+    },[]);
 
 
 
+    // this function help to create and push Ingredients object and it's array
     const CreateIngredient = () =>{
 
-        if( ingredientName.length === 0 || ingredientQuantity.length === 0 || ingredientMeasurement){
+        if( ingredientName.length === 0 || ingredientQuantity.length === 0 ){
             document.getElementById("validation-message").innerHTML = "All ingredient details must be filled";
         }
         else{
@@ -41,20 +49,24 @@ export default function Edit() {
         }
     }
 
+    // this function help to remove item in  Ingredients array using item name
     const HandleRemoveItem =(name) => {
         setIngredients(Ingredients.filter(item => item.name !== name))
     }
 
+    // this function help to track the ReactQuill component
     const onDescription = (value) => {
         setDescriptionInfo({ ...descriptionInfo,
           description:value
         });
     } 
 
+    // this function using we can create the recipe
+    const RecipeUpdate = () =>{
 
-    const RecipeCreate = () =>{
+        setError([]); //set Error array empty
 
-        setError([])
+        //Validations
         if( recipeName.length === 0 || descriptionInfo.description.length === 0 ){
             const message = {error:"Fill All Details"};
             setError(Error => [...Error, message]);            
@@ -67,66 +79,83 @@ export default function Edit() {
             const message = {error:"A recipe must have at least one ingredient"};
             setError(Error => [...Error, message]);  
         }
-    
+
 
         if(Error.length === 0){
 
-                fetch("/recipe/add",{
-                    method:"post",
-                    headers:{
-                        "Content-Type":"application/json",
-                    },
-                    body:JSON.stringify({
-            
+            fetch("/recipe/update/"+id,{
+                method:"PUT",
+                headers:{
+                    "Content-Type":"application/json",
+                },
+                body:JSON.stringify({
                     name:recipeName, 
                     description: descriptionInfo.description, 
                     ingredients:Ingredients,
-            
-                    })
-                }).then(res=>res.json())
-                .then(data => {
-            
-                    if(data.error){ 
-                    toast.error(data.error,{
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-                    }
-                    else{
-                    toast.success(data.message,{
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-                    setTimeout(function(){
-                        window.location.replace('/');
-                    },1000);
-                    }
-                    
-            
-                console.log("data create -", data)
-                }).catch((err)=>{
-                console.log("Error - ", err)
                 })
-            }
+            }).then(res=>res.json())
+            .then(data => {
+  
+                if(data.error){ 
+                      toast.error(data.error,{
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                      });
+                }
+                else{
+                  toast.success(data.success ,{
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                  });
+                  setTimeout(function(){
+                    window.location.replace('/recipe/'+id);
+                  },1000);
+                }
+                
+            }).catch((err)=>{
+              console.log("Error - ", err)
+            })
+
+        }
+    }
+
+    const getRecipe = () =>{
+
+        fetch("/recipe/"+id).then(res=>res.json())
+          .then(response=>{
+            setRecipeName(response.name);
+            setIngredients(response.ingredients);
+            setDescriptionInfo({description:response.description});
+            
+        })
+        .catch((err)=>{
+            console.log("Error - ",err)
+        })
     }
 
   return (
     <div>
-        <ToastContainer/>
+        <ToastContainer/> {/* use tost  */}
+
          <Header/>
         <div className='my-5 px-24 mb-15'>
+
+                <h1 className=' text-3xl  font-bold mb-1'>Recipe Edit</h1>
+                <hr className='mb-5'/>
+
                 <div div class="w-full md:w-full px-3 mb-6">
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Recipe Name</label>
                     <input className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none" 
                             type="text" 
+                            value={recipeName}
                             onChange={(e) => setRecipeName(e.target.value)} 
                     />
                 </div>
@@ -180,6 +209,7 @@ export default function Edit() {
                         </div>
                         <div>
                             <div>
+                            {/* check Ingredients length and its more than 0 we show the table  */}
                             { Ingredients.length > 0 && 
                                 <table className="border-collapse w-full">
                                     <thead>
@@ -190,6 +220,7 @@ export default function Edit() {
                                     </tr>
                                     </thead>
                                     <tbody>
+                                        {/* //Ingredients map the table */}
                                         {
                                             Ingredients.map(data =>(
 
@@ -219,6 +250,7 @@ export default function Edit() {
 
                 <div div class="w-full md:w-full px-3  h-auto mb-6 relative">
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Description</label>
+                        {/* in here we use to ReactQuill component */}
                         <ReactQuill style={{height:"240px"}}
                             className="  appearance-none block w-full bg-white text-gray-900 font-medium  rounded-lg py-3 px-3 leading-tight focus:outline-none"
                             theme="snow"
@@ -230,6 +262,7 @@ export default function Edit() {
                 <div div class="mt-20 relative px-3 mb-6 flex flex-col justify-end">
                     { Error.length > 0 &&
                         <div className='m-5'>
+                             {/* errors map */}
                             {
                                 Error.map( item => (
                                     <p className='text-red-600'>- {item.error}</p>
@@ -238,8 +271,8 @@ export default function Edit() {
                         </div>
                     }
 
-                    <button onClick={(e) => RecipeCreate()}  className="py-3 px-3 w-full  no-underline rounded-md bg-green-600 text-white font-sans font-bold text-sm border-blue  hover:text-white hover:bg-green-700">
-                        Create Recipe
+                    <button onClick={(e) => RecipeUpdate()}  className="py-3 px-3 w-full  no-underline rounded-md bg-yellow-500 text-white font-sans font-bold text-sm border-blue  hover:text-white hover:bg-yellow-700">
+                        Update Recipe
                     </button>
                 </div>
         </div>

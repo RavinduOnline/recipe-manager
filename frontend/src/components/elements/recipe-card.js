@@ -68,7 +68,7 @@ export default function RecipeCard({recipe , reload}) {
                         <i className="ri-fire-fill"></i> &nbsp; Let's Cook
                     </a>
                     <div className=' flex flex-row justify-centre item-centre mt-5'>
-                        <a onClick={() =>handleOpen()} className="w-1/2  text-white text-centre bg-yellow-500 font-medium  hover:bg-yellow-600  rounded-lg px-3 py-2 text-sm flex items-start justify-center " href="#3">
+                        <a href={`/recipe/edit/${recipe._id}`} className="w-1/2  text-white text-centre bg-yellow-500 font-medium  hover:bg-yellow-600  rounded-lg px-3 py-2 text-sm flex items-start justify-center ">
                             <i className="ri-edit-2-fill"></i>  &nbsp; Edit
                         </a>
                         <a  onClick={() =>handleOpen()} className="w-1/2  text-white ml-3 bg-red-500  font-medium  hover:bg-red-600  rounded-lg px-3 py-2 text-sm flex items-start justify-center" href="#3">

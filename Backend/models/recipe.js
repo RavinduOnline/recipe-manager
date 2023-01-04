@@ -17,6 +17,9 @@ const recipeSchema = new mongoose.Schema(
          quantity:{
             type: String,
         },
+        measurement:{
+            type: String,
+        }
         }
     ],
     description: {

@@ -20,7 +20,7 @@ export default function Create() {
     // this function help to create and push Ingredients object and it's array
     const CreateIngredient = () =>{
 
-        if( ingredientName.length === 0 || ingredientQuantity.length === 0 || ingredientMeasurement){
+        if( ingredientName.length === 0 || ingredientQuantity.length === 0 ){
             document.getElementById("validation-message").innerHTML = "All ingredient details must be filled";
         }
         else{
@@ -134,6 +134,10 @@ export default function Create() {
 
          <Header/>
         <div className='my-5 px-24 mb-15'>
+
+                <h1 className=' text-3xl  font-bold mb-1'>Recipe Create</h1>
+                <hr className='mb-5'/>
+
                 <div div class="w-full md:w-full px-3 mb-6">
                     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Recipe Name</label>
                     <input className="appearance-none block w-full bg-white text-gray-900 font-medium border border-gray-400 rounded-lg py-3 px-3 leading-tight focus:outline-none" 
